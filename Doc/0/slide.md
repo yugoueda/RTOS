@@ -67,8 +67,7 @@ choco install ninja gperf python311 git dtc-msys2 wget 7zip
 # 仮想環境の作成
 python -m venv zephyrproject\.venv
 # 仮想環境のアクティブ化
-zephyrproject\.venv\Scripts\activate.bat
-
+.\.venv\Scripts\Activate.ps1
 #batの実行に以下が必要かも
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
@@ -104,12 +103,14 @@ west packages pip --install
 # Zephyr SDKのダウンロード
 cd %HOMEPATH%\zephyrproject\zephyr
 west sdk install
+```
+---
 
-# 依存パッケージのインストール
-pip install -r zephyr/requirements.txt
-
-# 環境変数の設定
-export ZEPHYR_BASE=~/zephyr
+## ステップ 3: OpenOCDのインストール
+- 下記からDLして展開したフォルダをProgramFilesに配置
+- `C:\Program Files\OpenOCD\bin`をシステム環境変数に追加
+```bash
+https://gnutoolchains.com/arm-eabi/openocd
 ```
 
 ---
@@ -117,16 +118,20 @@ export ZEPHYR_BASE=~/zephyr
 ## ステップ 3: サンプルプロジェクトのビルド
 
 ```bash
-# Hello World アプリケーション
-cd zephyr/samples/hello_world
-
-# ビルド
-west build -b native_sim
-
-# 実行
-./build/zephyr/zephyr.elf
+# Lチカプログラムのビルド
+west build -p always -b rpi_pico2/rp2350a/m33 samples/basic/blinky
+# ボードへ書き込み
+west flash
 ```
-
+```bash
+# Hello,Worldのビルド
+west build -p always -b rpi_pico2/rp2350a/m33 samples/basic/blinky
+# ボードへ書き込み
+west flash
+#COM3ポートに以下が表示される
+*** Booting Zephyr OS build v4.3.0-6636-g3a40c90b9801 ***
+Hello World! rpi_pico2/rp2350a/m33
+```
 ---
 
 ## ステップ 4: 動作確認

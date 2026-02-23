@@ -19,6 +19,8 @@ footer: RTOS勉強会 第0回
 ---
 
 ## 環境構築の流れ
+### 参考サイト
+https://tech-and-investment.com/raspberrypi-pico2-05-zephyr01/
 
 1. 必要なツールのインストール
 2. Zephyr RTOS のセットアップ
@@ -38,11 +40,70 @@ footer: RTOS勉強会 第0回
 
 ---
 
+
+## ステップ 2: Zephyr RTOS セットアップ
+
+```bash
+# 管理者権限のpowershellで実行する
+# chocolateyのインストール
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# 確認メッセージの無効化
+choco feature enable -n allowGlobalConfirmation
+
+# cmakeインストール
+choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+
+#その他関連ツールのインストール
+choco install ninja gperf python311 git dtc-msys2 wget 7zip
+```
+
+---
+
+## ステップ 2: Python仮想環境の整備
+
+```bash
+# 通常ユーザのpowershellで実行する
+# 仮想環境の作成
+python -m venv zephyrproject\.venv
+# 仮想環境のアクティブ化
+zephyrproject\.venv\Scripts\activate.bat
+
+#batの実行に以下が必要かも
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+
+```
+---
+
+## ステップ 2: Python仮想環境の整備
+
+```bash
+# 通常ユーザのpowershellで実行する
+# westインストール
+pip install west
+
+# west初期化
+west init ~/zephyrproject
+
+# 作成したディレクトリに移動
+cd ~/zephyrproject
+
+#更新
+west update
+
+west zephyr-export
+
+west packages pip --install
+```
+
+---
+
 ## ステップ 2: Zephyr RTOS セットアップ
 
 ```bash
 # Zephyr SDKのダウンロード
-git clone https://github.com/zephyrproject-rtos/zephyr.git
+cd %HOMEPATH%\zephyrproject\zephyr
+west sdk install
 
 # 依存パッケージのインストール
 pip install -r zephyr/requirements.txt

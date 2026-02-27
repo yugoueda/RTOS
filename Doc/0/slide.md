@@ -6,15 +6,14 @@ footer: RTOS勉強会 第0回
 ---
 
 # RTOS勉強会 第0回
-## 環境構築
+## 環境構築編
 
 ---
 
 ## 今回の目標
 
-- RTOS開発環境をセットアップする
+- zephyrOS開発環境をセットアップする
 - 動作確認を行う
-- 次回以降の実習に向けて準備をする
 
 ---
 
@@ -35,8 +34,9 @@ https://tech-and-investment.com/raspberrypi-pico2-05-zephyr01/
 - **Python 3.8 以上**
 - **Git**
 - **CMake 3.20 以上**
-- **Ninja**（ビルドツール）
-- **ボードサポート**（QEMU または実機）
+- **west**
+- **zephyrSDK**
+- **openOCD**
 
 ---
 
@@ -46,8 +46,18 @@ https://tech-and-investment.com/raspberrypi-pico2-05-zephyr01/
 ```bash
 # 管理者権限のpowershellで実行する
 # chocolateyのインストール
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = `
+    [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex (
+    (New-Object System.Net.WebClient).DownloadString(
+        'https://community.chocolatey.org/install.ps1'
+    )
+)
+```
+---
+## ステップ 2: Zephyr RTOS セットアップ
+```bash
 # 確認メッセージの無効化
 choco feature enable -n allowGlobalConfirmation
 
@@ -60,7 +70,7 @@ choco install ninja gperf python311 git dtc-msys2 wget 7zip
 
 ---
 
-## ステップ 2: Python仮想環境の整備
+## ステップ 3: Python仮想環境の整備
 
 ```bash
 # 通常ユーザのpowershellで実行する
@@ -74,7 +84,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 ---
 
-## ステップ 2: Python仮想環境の整備
+## ステップ 3: Python仮想環境の整備
 
 ```bash
 # 通常ユーザのpowershellで実行する
@@ -97,7 +107,7 @@ west packages pip --install
 
 ---
 
-## ステップ 2: Zephyr RTOS セットアップ
+## ステップ 4: Zephyr RTOS セットアップ
 
 ```bash
 # Zephyr SDKのダウンロード
@@ -106,12 +116,12 @@ west sdk install
 ```
 ---
 
-## ステップ 3: OpenOCDのインストール
+## ステップ 5: OpenOCDのインストール
 - 下記からDLして展開したフォルダをProgramFilesに配置
-- `C:\Program Files\OpenOCD\bin`をシステム環境変数に追加
 ```bash
 https://gnutoolchains.com/arm-eabi/openocd
 ```
+- `C:\Program Files\OpenOCD\bin`をシステム環境変数に追加
 
 ---
 
@@ -130,21 +140,32 @@ https://gnutoolchains.com/arm-eabi/openocd
    - GPIOやICピンが破壊される原因
 ---
 
----
-
 ## ブレッドボードの仕組み
+### 参考サイト
+https://note.com/shingo_shirogane/n/n235af8d5d794
 
 ---
-
 ## ラズパイPico2回路図
+### 参考サイト
+- https://docs.sunfounder.com/projects/newton-lab-kit/ja/latest/raspberry_pi_pico2.html
 
+---
+![h:50%](image/slide/1772159888003.png)
 ---
 
 ## Zephyrとは
+### 参考サイト
+https://www.windriver.com/japan/solutions/learning/what-is-zephyr
+https://docs.zephyrproject.org/latest/index.html
 
 ---
-
-## ステップ 3: サンプルプロジェクトのビルド
+## ステップ 6: サンプルプロジェクトのビルド
+```bash
+# Hello,Worldのビルド
+west build -p always -b rpi_pico2/rp2350a/m33 samples/basic/blinky
+# ボードへ書き込み
+west flash
+```
 
 ```bash
 # Lチカプログラムのビルド
@@ -152,21 +173,17 @@ west build -p always -b rpi_pico2/rp2350a/m33 samples/basic/blinky
 # ボードへ書き込み
 west flash
 ```
-```bash
-# Hello,Worldのビルド
-west build -p always -b rpi_pico2/rp2350a/m33 samples/basic/blinky
-# ボードへ書き込み
-west flash
+---
+
+## ステップ 7: 動作確認
+
+✅ サンプルが正常にビルドできたか
+✅ 実行結果が表示されたか
+```
 #COM3ポートに以下が表示される
 *** Booting Zephyr OS build v4.3.0-6636-g3a40c90b9801 ***
 Hello World! rpi_pico2/rp2350a/m33
 ```
----
-
-## ステップ 4: 動作確認
-
-✅ サンプルが正常にビルドできたか
-✅ 実行結果が表示されたか
 ✅ エラーはないか
 
 これで環境構築は完了です！
@@ -178,21 +195,13 @@ Hello World! rpi_pico2/rp2350a/m33
 ### 第1回：RTOSとは何かを体験で掴む
 
 - RTOSとLinuxの違い
-- リアルタイム性を体験する
-- ジッタを観察する
+- ジッタとは
+- タスクとスレッドの違い
 
 ---
 
-## 質問・トラブルシューティング
-
-**よくある問題：**
-- Python バージョンが古い → 3.8 以上に更新
-- CMake が見つからない → PATH を確認
-- west コマンドが見つからない → `pip install west`
-
----
 
 ## 終了
 
-質問があればお気軽にどうぞ！
+次回開催日→
 

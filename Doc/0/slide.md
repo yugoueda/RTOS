@@ -7,6 +7,8 @@ footer: RTOS勉強会 第0回
 
 # RTOS勉強会 第0回
 ## 環境構築編
+https://github.com/yugoueda/RTOS/tree/main
+githubで検索 yugoueda in:name type:user
 
 ---
 
